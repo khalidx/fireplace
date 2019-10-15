@@ -20,15 +20,40 @@ It will keep your Lambda functions warm at the specified concurrency and rate se
 
 ## Usage
 
-Two-step installation process.
+Three-step installation process.
 
 1) Add the module configuration to your Terraform file.
 
     ```terraform
+    module "fireplace" {
+      source       = "github.com/khalidx/fireplace.git?ref=master"
+      functions    = [
+        
+      ]
+    }
+    ```
+
+2) Make sure your code can detect and handle a warming event (it should sleep for 75 milliseconds).
+
+    > Example: Node.js
+
+    ```javascript
 
     ```
 
-2) Initialize Terraform to install the module, and deploy! Your functions will stay nice and warm.
+    > Example: Python
+
+    ```python
+
+    ```
+
+    > Example: Java
+
+    ```java
+
+    ```
+
+3) Initialize Terraform to install the module, and deploy! Your functions will stay nice and warm.
 
     ```sh
     terraform init

@@ -11,12 +11,15 @@ Keep your Lambdas warm!
     - [deploy-example](#deploy-example)
     - [undeploy-example](#undeploy-example)
   - [Support](#support)
+  - [Thanks](#thanks)
 
 ## Introduction
 
 This repository contains a Terraform module that can be imported into any Terraform file/project.
 
 It will keep your Lambda functions warm at the specified concurrency and rate setting.
+
+A quick three-step installation process with examples (for Node.js, Python, and Java) to get you rolling, fast.
 
 ## Usage
 
@@ -102,4 +105,8 @@ npm run undeploy-example
 
 Please open a GitHub issue for a quick response to your question, comment, concern, or suggestion.
 
+## Thanks
+
 Thanks for reading!
+
+Also, a big thanks to Jeremy Daly and others for writing [great posts](https://www.jeremydaly.com/lambda-warmer-optimize-aws-lambda-function-cold-starts/) about the "intricacies" of warming AWS Lambda Functions.

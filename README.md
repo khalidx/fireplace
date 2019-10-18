@@ -41,7 +41,16 @@ Three-step installation process.
     > Example: Node.js
 
     ```javascript
-
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+     
+    export const handler = async (event, context) => {
+      if (event.type = "LambdaWarmerEvent") {
+        await delay(75);
+        return;
+      }
+      
+      ...regular handler logic here...
+    }
     ```
 
     > Example: Python

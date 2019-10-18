@@ -1,27 +1,30 @@
 import 'mocha'
 import { expect } from 'chai'
+import path from 'path'
+import fs from 'fs'
+import { handler, Event } from './index'
 
-import { handler } from './index'
+let event: Event
 
 describe('the fireplace function handler', () => {
 
-  it('should fail with a message when given an invalid payload', () => {
-    
+  before(async () => {
+    event = JSON.parse(fs.readFileSync(path.resolve(__dirname, './event.json')).toString()) as Event
+  })
+
+  it('should fail with a message when given an invalid payload', async () => {
+    try {
+      await handler(undefined!, undefined!, undefined!)
+    } catch (error) {
+      expect(error.message).to.equal(`"value" is required`)
+    }
   })
   
   it('should be able to warm 1 function with a concurrency of 1', async () => {
-    let result = await handler(undefined!, undefined!, undefined!)
-  })
-
-  it('should be able to warm 1 function with a concurrency of 10', () => {
 
   })
 
-  it('should be able to warm 10 functions with a concurrency of 5', () => {
-
-  })
-
-  it('should be able to warm 5 functions with a concurrency of 100', () => {
+  it('should be able to warm 10 functions with a concurrency of 25', () => {
 
   })
 

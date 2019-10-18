@@ -73,6 +73,8 @@ The following commands are made available for your convenience when developing t
 
 Runs the tests defined in the `src/index.test.ts` file.
 
+Ensure you have valid credentials set as environment variables when running tests locally. Basically, the `AWS_REGION` and `AWS_PROFILE` environment variables should be set. [Click here for more information](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html) about the various options for setting AWS credentials.
+
 ```sh
 npm run test
 ```

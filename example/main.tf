@@ -9,7 +9,12 @@ module "fireplace" {
 
   # Here are some common options that you can provide to the module. For a full list of  
   #   options (and more information about each one) see the ../variables.tf file.
-  functions = [
-
+  instructions = [
+    {
+      name = "some-function",                      # the name of a Lambda Function
+      payload = "{ \"type\": \"some-payload\" }",  # the payload to send to the Lambda Function during warming
+      concurrency = 5,                             # the number of instances of the funciton that should be warm
+      rate = 1                                     # the rate (in minutes) for running the warmer on a schedule
+    }
   ]
 }

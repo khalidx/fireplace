@@ -1,7 +1,32 @@
-import { ScheduledHandler } from 'aws-lambda'
+import { ScheduledHandler, ScheduledEvent } from 'aws-lambda'
 import { Lambda } from 'aws-sdk'
+import Joi from '@hapi/joi'
 
-const lambda = new Lambda()
+export const schema = Joi.object({
+  detail: Joi.object({
+    instructions: Joi.array().required().min(1).items({
+      name: Joi.string().required().min(1).max(64),
+      payload: Joi.string().required(),
+      concurrency: Joi.number().required().integer().min(1),
+      rate: Joi.number().required().integer().min(1)
+    }).required()
+  }).required()
+}).required()
+
+export interface Event extends ScheduledEvent {
+  detail: {
+    instructions: Array<{
+      name: string         // the name of a Lambda Function
+      payload: string      // the payload to send to the Lambda Function during warming
+      concurrency: number  // the number of instances of the funciton that should be warm
+      rate: number         // the rate (in minutes) for running the warmer on a schedule
+    }>
+  }
+}
+
+export const validate = (event: any): Promise<Event> => schema.validateAsync(event, { abortEarly: false, stripUnknown: true })
+
+export const lambda = new Lambda()
 
 /**
  * 1) Gets the warming instructions from the event
@@ -17,13 +42,13 @@ const lambda = new Lambda()
  * @param event the CloudWatch ScheduledEvent
  * @param context the AWS Lambda Function Context
  */
-export const handler: ScheduledHandler = async (event, context) => {
+export const handler: ScheduledHandler = async (event: Event, context) => {
   try {
     let start = new Date()
     console.log('Starting the fireplace ...')
     console.log(JSON.stringify({ iso: start.toISOString(), locale: start.toLocaleString() }))
 
-    let instructions = JSON.parse(event.detail) as Instructions
+    let instructions = (await validate(event)).detail.instructions
 
     let results = await Promise.all(instructions.map(instruction => lambda.invoke({
       InvocationType: 'Event',
@@ -33,7 +58,7 @@ export const handler: ScheduledHandler = async (event, context) => {
 
     let errors = results.filter(result => result.StatusCode !== 202 || result.FunctionError)
     
-    if (errors.length > 0) throw new Error(`Several invocation errors occurred during warming: ${JSON.stringify(errors, null, 2)}`)
+    if (errors.length > 0) throw new Error(`Some invocation errors occurred during warming: ${JSON.stringify(errors, null, 2)}`)
     
     let end = new Date()
     console.log(`The fireplace was lit for ${end.valueOf() - start.valueOf()}ms.`)
@@ -42,10 +67,3 @@ export const handler: ScheduledHandler = async (event, context) => {
     throw error
   }
 }
-
-export type Instructions = Array<{
-  name: string
-  payload: string
-  concurrency: number
-  rate: number
-}>
